@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  # ---------------------------------------------------------------------------
+  # Service 1: Django Backend (The App)
+  # ---------------------------------------------------------------------------
+  web:
+    container_name: retail_django_app
+    build: 
+      context: ./retail_audit_django
+      dockerfile: Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./retail_audit_django:/app
+      - ./retail_audit_django/media:/app/media
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DB_HOST=db
+      - DB_NAME=retail_db
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,[::1]
+    # Connect to the custom network
+    networks:
+      - retail_network
+
+  # ---------------------------------------------------------------------------
+  # Service 2: PostgreSQL with PGVector (The Database)
+  # ---------------------------------------------------------------------------
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: retail_pgvector_db
+    environment:
+      - POSTGRES_DB=retail_db
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d retail_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    # Connect to the custom network
+    networks:
+      - retail_network
+
+# ---------------------------------------------------------------------------
+# Network Definition
+# ---------------------------------------------------------------------------
+networks:
+  retail_network:
+    name: retail_project  # Explicit name you requested
+    driver: bridge
+
+# ---------------------------------------------------------------------------
+# Volume Definition
+# ---------------------------------------------------------------------------
+volumes:
+  postgres_data:

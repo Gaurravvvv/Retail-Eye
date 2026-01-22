@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center" style="min-height: 60vh;">
+
+    <div class="col-md-8 text-center">
+        <div class="mc-panel">
+            <h1 class="mb-4" style="color: #3f3f3f; text-shadow: none;">MAIN MENU</h1>
+
+            <div class="d-grid gap-4">
+                <!-- Scan Button -->
+                <a href="{% url 'scan_shelf' %}" class="text-decoration-none">
+                    <div class="mc-button" style="padding: 30px;">
+                        <div style="font-size: 3rem;">📷</div>
+                        <h2>SCAN SHELF</h2>
+                        <span style="font-size: 0.9rem; color: #ddd;">Analyze Items</span>
+                    </div>
+                </a>
+
+                <!-- Manage Button -->
+                <a href="{% url 'product_list' %}" class="text-decoration-none">
+                    <div class="mc-button" style="padding: 30px;">
+                        <div style="font-size: 3rem;">📦</div>
+                        <h2>INVENTORY</h2>
+                        <span style="font-size: 0.9rem; color: #ddd;">Edit Database</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col-md-12">
+        <h2 style="font-family: 'Orbitron', sans-serif;">Current Stock Levels</h2>
+        <p class="text-muted">Read-only view for floor staff.</p>
+    </div>
+</div>
+
+<!-- Search Bar -->
+<div class="mb-4">
+    <input type="text" id="searchInput" class="form-control p-3" placeholder="🔍 Search stock...">
+</div>
+
+<div class="card p-3">
+    <div class="table-responsive">
+        <table class="table align-middle" id="inventoryTable">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Product Name</th>
+                    <th>Stock Status</th>
+                    <th>Threshold</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td>
+                        {% if product.reference_image %}
+                        <img src="{{ product.reference_image.url }}" alt="{{ product.name }}"
+                            style="height: 60px; width: 60px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-color);">
+                        {% else %}
+                        <span class="text-muted">No IMG</span>
+                        {% endif %}
+                    </td>
+                    <td class="fw-bold">{{ product.name }}</td>
+                    <td>
+                        {% if product.backroom_stock <= product.shelf_threshold %} <span class="stock-low">⚠️ Low ({{
+                            product.backroom_stock }})</span>
+                            {% else %}
+                            <span class="stock-good">✅ Good ({{ product.backroom_stock }})</span>
+                            {% endif %}
+                    </td>
+                    <td>{{ product.shelf_threshold }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center py-4 text-muted">No products found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    document.getElementById('searchInput').addEventListener('keyup', function () {
+        let filter = this.value.toLowerCase();
+        let rows = document.querySelectorAll('#inventoryTable tbody tr');
+
+        rows.forEach(row => {
+            let text = row.innerText.toLowerCase();
+            row.style.display = text.includes(filter) ? '' : 'none';
+        });
+    });
+</script>
+{% endblock %}

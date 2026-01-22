@@ -1,0 +1,9 @@
+django>=4.2
+ultralytics
+torch
+torchvision
+numpy
+pillow
+opencv-python-headless
+psycopg2-binary    
+pgvector

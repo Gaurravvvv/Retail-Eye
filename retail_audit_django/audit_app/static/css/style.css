@@ -1,0 +1,213 @@
+@font-face {
+    font-family: 'Minecraft';
+    src: url('../fonts/Minecraft.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+:root {
+    /* Dark Theme (Default) */
+    --mc-bg-color: #1e1e1e;
+    --mc-bg-pattern: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAIklEQVQIW2NkQAKrVq36zwjjgzjwqjh//jxIDxuBTAXLAAAl2Qps3N3U1AAAAABJRU5ErkJggg==');
+    --mc-panel-bg: #c6c6c6;
+    --mc-text: #3f3f3f;
+    --mc-text-inverse: #ffffff;
+    --mc-border-light: #ffffff;
+    --mc-border-dark: #555555;
+    --mc-btn-bg: #8b8b8b;
+    --mc-btn-hover: #9e9e9e;
+    --mc-btn-text: #ffffff;
+    --mc-btn-shadow: 2px 2px #000;
+    --mc-heading-color: #fff;
+    --mc-heading-shadow: 3px 3px 0px #000;
+    --mc-btn-red: #D32F2F;
+    --mc-accent: #39ff14;
+    --mc-input-bg: #000;
+    --mc-input-text: #fff;
+    --mc-navbar-bg: #2c2c2c;
+}
+
+
+
+body {
+    background-color: var(--mc-bg-color);
+    background-image: var(--mc-bg-pattern);
+    font-family: 'Minecraft', 'Courier New', monospace;
+    color: var(--mc-text-inverse);
+    /* Default text color for body outside panels */
+    image-rendering: pixelated;
+    margin: 0;
+    transition: background-color 0.3s;
+}
+
+a {
+    text-decoration: none;
+}
+
+/* --- Panel Style --- */
+.mc-panel,
+.mc-form-panel {
+    background-color: var(--mc-panel-bg);
+    border: 4px solid #000;
+    box-shadow: inset 4px 4px 0px var(--mc-border-light), inset -4px -4px 0px var(--mc-border-dark);
+    padding: 20px;
+    margin-bottom: 20px;
+    color: var(--mc-text);
+}
+
+.mc-form-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* --- Typography --- */
+h1,
+h2,
+h3 {
+    text-shadow: var(--mc-heading-shadow);
+    color: var(--mc-heading-color);
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.mc-panel h2,
+.mc-panel h3 {
+    color: var(--mc-text);
+    text-shadow: none;
+}
+
+/* --- Buttons --- */
+.mc-button {
+    display: inline-block;
+    width: 100%;
+    padding: 15px;
+    background-color: var(--mc-btn-bg);
+    border: 4px solid #000;
+    border-top-color: var(--mc-border-light);
+    border-left-color: var(--mc-border-light);
+    border-right-color: var(--mc-border-dark);
+    border-bottom-color: var(--mc-border-dark);
+    color: var(--mc-btn-text);
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    text-align: center;
+    cursor: pointer;
+    text-shadow: var(--mc-btn-shadow);
+    transition: none;
+    /* No smooth transition for pixel feel */
+    margin-bottom: 10px;
+}
+
+.mc-button:hover {
+    background-color: var(--mc-btn-hover);
+    color: #ffffa0;
+    /* Keeping hover yellow for both themes as signature */
+    text-shadow: 2px 2px #000;
+    border-top-color: #ffffa0;
+    border-left-color: #ffffa0;
+}
+
+.mc-button:active {
+    border-top-color: var(--mc-border-dark);
+    border-left-color: var(--mc-border-dark);
+    border-right-color: var(--mc-border-light);
+    border-bottom-color: var(--mc-border-light);
+    transform: translateY(2px);
+}
+
+.mc-button-red {
+    background-color: var(--mc-btn-red);
+    border: 4px solid #000;
+    color: white;
+    text-shadow: 2px 2px #000;
+    padding: 8px 15px;
+    border-top-color: #ff8a80;
+    border-left-color: #ff8a80;
+    border-right-color: #8b0000;
+    border-bottom-color: #8b0000;
+    cursor: pointer;
+}
+
+.mc-button-red:hover {
+    background-color: #ff5252;
+}
+
+/* --- Inputs --- */
+.mc-label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: var(--mc-text);
+    /* Matches panel text */
+}
+
+.mc-input {
+    width: 100%;
+    padding: 10px;
+    background: var(--mc-input-bg);
+    border: 2px solid #a0a0a0;
+    color: var(--mc-input-text);
+    font-family: inherit;
+    font-size: 1rem;
+    margin-bottom: 15px;
+}
+
+.mc-input:focus {
+    border-color: var(--mc-accent);
+    outline: none;
+}
+
+/* --- Navbar --- */
+.navbar {
+    background-color: var(--mc-navbar-bg) !important;
+    border-bottom: 4px solid #000;
+    margin-bottom: 30px;
+    padding: 1rem;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    color: var(--mc-text-inverse) !important;
+    text-shadow: 2px 2px 0px #000;
+}
+
+.nav-link {
+    color: #ccc !important;
+    text-transform: uppercase;
+    margin: 0 10px;
+}
+
+.nav-link:hover {
+    color: #ffffa0 !important;
+    text-decoration: underline;
+}
+
+/* --- Table --- */
+.mc-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #2b2b2b;
+    border: 4px solid #000;
+    color: white;
+}
+
+.mc-table th {
+    background: #505050;
+    padding: 12px;
+    border-bottom: 4px solid #000;
+    border-right: 2px solid #333;
+    text-align: left;
+}
+
+.mc-table td {
+    background: #3a3a3a;
+    padding: 12px;
+    border-bottom: 2px solid #222;
+    border-right: 2px solid #222;
+}
+
+.mc-table tr:hover td {
+    background: #4a4a4a;
+}

@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="mc-panel">
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-6">
+            <h2 style="color: #3f3f3f; text-shadow: none;">INVENTORY</h2>
+        </div>
+        <div class="col-md-6 text-end">
+            <a href="{% url 'manage_inventory' %}" class="mc-button" style="width: auto;">+ CRAFT ITEM</a>
+        </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="mb-4">
+        <input type="text" id="searchInput" class="mc-input" placeholder="Search Chest...">
+    </div>
+
+    <div class="table-responsive">
+        <table class="mc-table" id="inventoryTable">
+            <thead>
+                <tr>
+                    <th>ICON</th>
+                    <th>ITEM NAME</th>
+                    <th>COUNT</th>
+                    <th>LIMIT</th>
+                    <th class="text-end">ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td>
+                        {% if product.reference_image %}
+                        <img src="{{ product.reference_image.url }}" alt="{{ product.name }}"
+                            style="height: 50px; width: 50px; border: 2px solid #000; image-rendering: pixelated;">
+                        {% else %}
+                        <span>NONE</span>
+                        {% endif %}
+                    </td>
+                    <td class="fw-bold">{{ product.name }}</td>
+                    <td>
+                        {% if product.backroom_stock <= product.shelf_threshold %} <span
+                            style="color: #ff5555; font-weight: bold;">LOW ({{ product.backroom_stock }})</span>
+                            {% else %}
+                            <span style="color: #55ff55; font-weight: bold;">OK ({{ product.backroom_stock }})</span>
+                            {% endif %}
+                    </td>
+                    <td>{{ product.shelf_threshold }}</td>
+                    <td class="text-end">
+                        <a href="{% url 'product_edit' product.pk %}" class="mc-button"
+                            style="padding: 5px 10px; font-size: 0.8rem; width: auto;">EDIT</a>
+                        <a href="{% url 'product_delete' product.pk %}" class="mc-button-red"
+                            style="padding: 5px 10px; font-size: 0.8rem;">DEL</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center py-4">CHEST IS EMPTY</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // Simple Client-side Search
+    document.getElementById('searchInput').addEventListener('keyup', function () {
+        let filter = this.value.toLowerCase();
+        let rows = document.querySelectorAll('#inventoryTable tbody tr');
+
+        rows.forEach(row => {
+            let text = row.innerText.toLowerCase();
+            row.style.display = text.includes(filter) ? '' : 'none';
+        });
+    });
+</script>
+{% endblock %}

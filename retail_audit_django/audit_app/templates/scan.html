@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-9">
+
+        <!-- Results Section -->
+        {% if image_url %}
+        <div class="mc-panel">
+            <h2 class="text-center">SCAN COMPLETE</h2>
+            <div class="text-center">
+                <img src="{{ image_url }}" class="img-fluid mb-3"
+                    style="border: 4px solid #000; box-shadow: 4px 4px 0px #555;">
+
+                <h3 class="mt-3">LOOT DETECTED:</h3>
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    {% for item in detected_products %}
+                    <a href="{% url 'product_detail' item.product.id %}" class="text-decoration-none">
+                        <div class="mc-button" style="width: auto; padding: 10px;">
+                            {{ item.product.name }} x{{ item.count }}
+                        </div>
+                    </a>
+                    {% empty %}
+                    <div class="mc-panel" style="background: #333; color: #fff;">
+                        No items found.
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <hr style="border-top: 4px solid #555;">
+                <div class="mt-3">
+                    <a href="{% url 'scan_shelf' %}" class="mc-button">SCAN AGAIN</a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+
+        <!-- Scan Input Section -->
+        <div class="mc-panel text-center" id="scan-menu">
+            <h2>START SCANNING</h2>
+            <p class="mb-4">Select a method...</p>
+
+            <form method="post" enctype="multipart/form-data" id="scanForm">
+                {% csrf_token %}
+
+                <!-- Hidden input for the final file submission -->
+                <input id="final-image-input" type="file" name="shelf_image" accept="image/*" style="display: none;">
+
+                <div class="row">
+                    <!-- Option A: Gallery Upload -->
+                    <div class="col-md-6 mb-3">
+                        <label for="file-upload" class="mc-button"
+                            style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px;">
+                            <div style="font-size: 3rem;">📂</div>
+                            <div>UPLOAD FILE</div>
+                        </label>
+                        <!-- Standard File Input -->
+                        <input id="file-upload" type="file" accept="image/*" style="display: none;"
+                            onchange="handleFileUpload(this)">
+                    </div>
+
+                    <!-- Option B: Live Camera (JS Stream) -->
+                    <div class="col-md-6 mb-3">
+                        <div class="mc-button" onclick="startCamera()"
+                            style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px;">
+                            <div style="font-size: 3rem;">📷</div>
+                            <div>USE CAMERA</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="loading" style="display:none;" class="mt-3">
+                    <h3>SCANNING...</h3>
+                </div>
+
+            </form>
+        </div>
+
+        <!-- Hidden Camera Interface -->
+        <div class="mc-panel text-center" id="camera-ui" style="display: none;">
+            <h2>CAMERA FEED</h2>
+            <div
+                style="position: relative; background: #000; width: 100%; max-width: 640px; margin: 0 auto; border: 4px solid #000;">
+                <video id="video" autoplay playsinline style="width: 100%; height: auto;"></video>
+            </div>
+
+            <div class="mt-4 d-flex justify-content-center gap-3">
+                <button type="button" class="mc-button-red" onclick="closeCamera()">CANCEL</button>
+                <button type="button" class="mc-button" onclick="takePhoto()">SNAP PHOTO</button>
+            </div>
+        </div>
+
+        <!-- Hidden Canvas for Capture -->
+        <canvas id="canvas" style="display: none;"></canvas>
+
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    // --- File Upload Logic ---
+    function handleFileUpload(input) {
+        if (input.files && input.files[0]) {
+            const finalInput = document.getElementById('final-image-input');
+            finalInput.files = input.files;
+            submitForm();
+        }
+    }
+
+    function submitForm() {
+        document.getElementById('scan-menu').style.display = 'block';
+        document.getElementById('camera-ui').style.display = 'none';
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('scanForm').submit();
+    }
+
+    // --- Camera Logic ---
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    let stream = null;
+
+    function startCamera() {
+        document.getElementById('scan-menu').style.display = 'none';
+        document.getElementById('camera-ui').style.display = 'block';
+
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+                .then(function (s) {
+                    stream = s;
+                    video.srcObject = stream;
+                    video.play();
+                })
+                .catch(function (err) {
+                    console.log("An error occurred: " + err);
+                    alert("Could not access camera. Please allow permissions.");
+                    closeCamera();
+                });
+        }
+    }
+
+    function closeCamera() {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+        }
+        document.getElementById('camera-ui').style.display = 'none';
+        document.getElementById('scan-menu').style.display = 'block';
+    }
+
+    function takePhoto() {
+        if (!stream) return;
+
+        // Ensure video is playing and has dimensions
+        if (video.videoWidth === 0 || video.videoHeight === 0) {
+            console.log("Video not ready yet");
+            return;
+        }
+
+        // Set canvas dimensions to match video
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        // Draw image
+        const context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Stop stream
+        closeCamera();
+
+        // Convert to file and submit
+        canvas.toBlob(function (blob) {
+            const file = new File([blob], "camera_capture.jpg", { type: "image/jpeg" });
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+
+            const finalInput = document.getElementById('final-image-input');
+            finalInput.files = dataTransfer.files;
+
+            submitForm();
+        }, 'image/jpeg');
+    }
+</script>
+{% endblock %}

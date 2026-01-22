@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="col-md-5">
+        <div class="mc-panel shadow-lg">
+            <h2 class="text-center mb-4" style="color: var(--mc-text);">SYSTEM LOGIN</h2>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label class="mc-label">USERNAME</label>
+                    <input type="text" name="username" class="mc-input" placeholder="Enter ID..." required>
+                </div>
+
+                <div class="mb-4">
+                    <label class="mc-label">PASSWORD</label>
+                    <input type="password" name="password" class="mc-input" placeholder="Enter Password..." required>
+                </div>
+
+                <button type="submit" class="mc-button">ACCESS SYSTEM</button>
+            </form>
+
+            <div class="text-center mt-3">
+                <small style="color: #666;">AUTHORIZED PERSONNEL ONLY</small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

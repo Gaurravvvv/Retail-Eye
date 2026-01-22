@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="mc-form-container">
+    <div class="mc-form-panel">
+        <h2 style="color: #3f3f3f; text-shadow: none;">ADD NEW ITEM</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <label class="mc-label">ITEM NAME</label>
+            <input type="text" name="name" class="mc-input" required>
+
+            <label class="mc-label">SHELF THRESHOLD</label>
+            <input type="number" name="threshold" value="5" class="mc-input" required>
+
+            <label class="mc-label">BACKROOM STOCK</label>
+            <input type="number" name="stock" value="10" class="mc-input" required>
+
+            <label class="mc-label">REFERENCE IMAGE</label>
+            <input type="file" name="image" accept="image/*" class="mc-input" required>
+
+            <div class="mt-4">
+                <button type="submit" class="mc-button">CRAFT ITEM</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
