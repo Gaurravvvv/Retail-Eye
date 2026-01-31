@@ -7,3 +7,4 @@ pillow
 opencv-python-headless
 psycopg2-binary    
 pgvector
+python-dotenv
