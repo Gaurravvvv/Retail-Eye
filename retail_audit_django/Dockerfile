@@ -29,4 +29,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 4. Copy Code
 COPY . /app/
 
-CMD ["python", "manage.py", "runserver"]
+# 5. Entrypoint Setup
+COPY entrypoint.sh /app/entrypoint.sh
+RUN sed -i 's/\r$//g' /app/entrypoint.sh && chmod +x /app/entrypoint.sh
+
+ENTRYPOINT ["/app/entrypoint.sh"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

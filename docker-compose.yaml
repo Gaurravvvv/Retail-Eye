@@ -24,6 +24,10 @@ services:
       - DB_USER=user
       - DB_PASSWORD=password
       - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,[::1]
+      # Auto-create superuser credentials
+      - DJANGO_SUPERUSER_USERNAME=admin
+      - DJANGO_SUPERUSER_EMAIL=admin@example.com
+      - DJANGO_SUPERUSER_PASSWORD=admin
     # Connect to the custom network
     networks:
       - retail_network
